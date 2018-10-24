@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/game_list_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/game_list_background"
+    android:layout_margin="8dp">
+
+    <ImageView
+        android:id="@+id/game_list_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="8dp"
+        android:src="@color/light_grey"/>
+
+    <TextView
+        android:id="@+id/game_list_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="Temp"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:layout_toRightOf="@id/game_list_image"/>
+
+</RelativeLayout>
