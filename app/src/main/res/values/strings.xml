@@ -3,8 +3,9 @@
     <string name="search_hint">Search...</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
-    <string name="ok">Ok</string>
+    <string name="api_ok">OK</string>
 
+    <string name="bad_key">fea4</string>
     <string name="api_key">e9e65f894c48b9fbd42822ff5b472b7f6b3a2b11</string>
     <string name="json">json</string>
     <string name="game">game</string>
@@ -17,7 +18,10 @@
     <string name="api_fail_title">An Error Occurred</string>
     <string name="api_fail_msg">An error occurred while trying to get the list of games.</string>
     <string name="no_games_found_title">Nothing Found</string>
-    <string name="no_games_found_msg">Was not able to find a game that matched that the search</string>
+    <string name="no_games_found_msg">Was not able to find a game that matched that the search. Please try again.</string>
+    <string name="server_error_title">A Server Error Occurred</string>
+    <string name="server_error_message">An error occurred while trying to get your game list, please try again later.</string>
+    <string name="progress_dialog">Search for Games...</string>
 
     <!-- Adapter -->
     <string name="description"> Description</string>

@@ -6,6 +6,8 @@ import java.util.List;
 
 public class SearchResult {
 
+    @SerializedName("error")
+    private String errorMessage;
     @SerializedName("number_of_page_results")
     private int searchCount;
     @SerializedName("results")
@@ -27,4 +29,13 @@ public class SearchResult {
     public void setSearchCount(int searchCount) {
         this.searchCount = searchCount;
     }
+
+    public String getError() {
+        return errorMessage;
+    }
+
+    public void setError(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
 }
