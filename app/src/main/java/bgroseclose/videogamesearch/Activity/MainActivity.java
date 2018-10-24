@@ -1,7 +1,9 @@
 package bgroseclose.videogamesearch.Activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -68,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         component = DaggerIGameListComponent.builder()
                 .contextModule(new ContextModule(this))
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         mBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doSearch();
+                doSearch(false);
             }
         });
 
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 clearList(true);
-                doSearch();
+                doSearch(true);
                 mGameListRefresh.setRefreshing(false);
             }
         });
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    doSearch();
+                    doSearch(false);
                     return true;
                 }
                 return false;
@@ -120,7 +122,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void hideKeyboard() {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) MainActivity.this.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(
+                    MainActivity.this.getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
     private void doMainSearch() {
+        hideKeyboard();
         search = mEditMainSearch.getText().toString();
         if (!search.isEmpty()) {
             setAdapterWithRetrofit(search, true);
@@ -129,8 +142,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void doSearch() {
-        if (!search.isEmpty() && search.equals(mEditSearch.getText().toString())) {
+    private void doSearch(boolean isRefeshing) {
+        if (!isRefeshing)
+            hideKeyboard();
+        if (!search.isEmpty() && (search.equals(mEditSearch.getText().toString())) || mEditSearch.getText().toString().isEmpty()) {
             setAdapterWithRetrofit(search, false);
         } else if (!mEditSearch.getText().toString().isEmpty()) {
             search = mEditSearch.getText().toString();
@@ -141,27 +156,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAdapterWithRetrofit(final String search, final boolean fromMainSearch) {
+        showProgressDialog(false);
         IGameListService service = component.getGameListService();
         final Picasso picasso = component.getPicasso();
-        Call<SearchResult> call = service.getSearchResult(getString(R.string.bad_key),
+        Call<SearchResult> call = service.getSearchResult(getString(R.string.api_key),
                 getString(R.string.json),
                 "\"".concat(search).concat("\""),
                 getString(R.string.game));
         call.enqueue(new Callback<SearchResult>() {
             @Override
-            public void onResponse(final Call<SearchResult> call, Response<SearchResult> response) {
+            public void onResponse(@NonNull final Call<SearchResult> call, @NonNull Response<SearchResult> response) {
                 SearchResult result = response.body();
                 if (result != null) {
                     if (result.getSearchCount() != 0) {
-                        GameListAdapter adapter = new GameListAdapter(MainActivity.this, result, picasso);
+                        GameListAdapter adapter = new GameListAdapter(MainActivity.this, result);
                         mGameRecyclerView.setAdapter(adapter);
                         mGameRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                         mToolbar.setTitle(search);
-                        if(fromMainSearch) {
+                        showProgressDialog(true);
+                        if (fromMainSearch) {
                             mMainRelativeLayout.setVisibility(View.GONE);
                             mRecyclerLayoutRelativeLayout.setVisibility(View.VISIBLE);
                         }
                     } else {
+                        showProgressDialog(true);
                         AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                                 .setIcon(R.drawable.ic_info)
                                 .setTitle(getString(R.string.no_games_found_title))
@@ -176,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
                         dialog.show();
                     }
                 } else {
+                    showProgressDialog(true);
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                             .setIcon(R.drawable.ic_error)
                             .setTitle(getString(R.string.server_error_title))
@@ -192,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<SearchResult> call, Throwable t) {
+            public void onFailure(@NonNull Call<SearchResult> call, @NonNull Throwable t) {
                 AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                         .setIcon(R.drawable.ic_error)
                         .setTitle(getString(R.string.api_fail_title))
@@ -239,11 +258,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showProgressDialog(boolean cancel) {
-        if(cancel) {
+        if (cancel) {
             progressDialog.dismiss();
         } else {
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage(getString(R.string.progress_dialog));
+            progressDialog.show();
         }
     }
 

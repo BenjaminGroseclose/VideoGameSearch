@@ -25,12 +25,10 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.ViewHo
 
     private Context context;
     private SearchResult result;
-    private Picasso picasso;
 
-    public GameListAdapter(Context context, SearchResult result, Picasso picasso) {
+    public GameListAdapter(Context context, SearchResult result) {
         this.context = context;
         this.result = result;
-        this.picasso = picasso;
     }
 
     @NonNull
@@ -56,6 +54,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.ViewHo
                         .setTitle(game.getGameName())
                         .setMessage(game.getGameDesc())
                         .setIcon(R.drawable.ic_info)
+                        .setNeutralButton(context.getString(R.string.close), null)
                         .create();
                 dialog.show();
             }
@@ -67,13 +66,13 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.ViewHo
         return result.getSearchCount();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        public RelativeLayout mGameListView;
-        public ImageView mGameImage;
-        public TextView mGameTitle;
+        RelativeLayout mGameListView;
+        ImageView mGameImage;
+        TextView mGameTitle;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             mGameListView = itemView.findViewById(R.id.game_list_view);
             mGameImage = itemView.findViewById(R.id.game_list_image);

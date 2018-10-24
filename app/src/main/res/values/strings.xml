@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VideoGameSearch</string>
+    <string name="app_name">Video Game Searcher</string>
     <string name="search_hint">Search...</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
@@ -11,10 +11,9 @@
     <string name="game">game</string>
 
     <!-- Main Activity -->
-    <string name="toolbar_title">Video Game Search</string>
     <string name="blank_search_msg">Please enter something then try to search</string>
     <string name="info_title">Information</string>
-    <string name="info_msg">Search for any game! Double click on the title to get a short description of the game.</string>
+    <string name="info_msg">Search for any game! Click on the title to get a short description of the game.</string>
     <string name="api_fail_title">An Error Occurred</string>
     <string name="api_fail_msg">An error occurred while trying to get the list of games.</string>
     <string name="no_games_found_title">Nothing Found</string>
